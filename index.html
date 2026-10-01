@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LinkedIn Positioning Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07111f;--panel:#0d1b2e;--panel2:#10243c;--text:#eef5ff;--muted:#9fb0c5;--line:#203752;--accent:#4da3ff;--accent2:#7c5cff;--good:#42d392;--warn:#ffbd59;--bad:#ff6b7a}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#06101c,#0a1728 55%,#10152b);color:var(--text);font-family:Inter,Arial,sans-serif}
+.container{max-width:1180px;margin:auto;padding:36px 22px 70px}
+header{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:42px}
+.logo{font-weight:800;letter-spacing:-.5px}.logo span{color:var(--accent)}
+.badge{border:1px solid #29415d;background:#0c1a2b;border-radius:999px;padding:8px 13px;color:#b9c9db;font-size:12px}
+.hero{max-width:850px;margin-bottom:30px}.eyebrow{color:#70b8ff;text-transform:uppercase;font-size:12px;font-weight:800;letter-spacing:1.5px}
+h1{font-size:clamp(34px,5vw,58px);line-height:1.02;margin:10px 0 16px;letter-spacing:-2px}
+.hero p{font-size:17px;line-height:1.7;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{background:rgba(13,27,46,.88);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 20px 60px #0003}
+label{display:block;font-size:12px;font-weight:700;color:#c6d4e4;margin:0 0 8px}input,select,textarea{width:100%;border:1px solid #29415d;background:#091729;color:var(--text);border-radius:11px;padding:13px 14px;font:inherit;outline:none}input:focus,select:focus,textarea:focus{border-color:var(--accent)}textarea{min-height:130px;resize:vertical}.field{margin-bottom:17px}.full{grid-column:1/-1}
+button{border:0;border-radius:11px;padding:13px 18px;font-weight:800;font-family:inherit;cursor:pointer}.primary{background:linear-gradient(90deg,var(--accent),#6e78ff);color:white}.secondary{background:#152b45;color:#dbe9f8;border:1px solid #29415d}
+.actions{display:flex;gap:10px;align-items:center;margin-top:4px}.hint{font-size:12px;color:var(--muted)}
+#results{display:none;margin-top:26px}.scoregrid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:15px 0 20px}.score{background:#091729;border:1px solid #213954;border-radius:14px;padding:15px}.score b{display:block;font-size:25px;margin-top:5px}.score small{color:var(--muted)}
+.bar{height:7px;background:#1b3048;border-radius:99px;margin-top:10px;overflow:hidden}.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.section-title{display:flex;justify-content:space-between;align-items:center;gap:10px}.section-title h2{font-size:20px;margin:0}.tag{font-size:11px;color:#9fcaff;background:#102b49;border:1px solid #234b72;padding:6px 9px;border-radius:999px}
+.resultgrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.output{background:#081525;border:1px solid #213954;border-radius:12px;padding:16px;line-height:1.65;color:#dce8f5;white-space:pre-wrap}.keyword{display:inline-block;margin:5px 5px 0 0;padding:7px 10px;background:#12263e;border:1px solid #29415d;border-radius:999px;font-size:12px}
+.priority{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #1b3048}.priority:last-child{border:0}.num{width:28px;height:28px;border-radius:50%;background:#183453;display:grid;place-items:center;color:#8ec8ff;font-weight:800;flex:none}.priority strong{display:block;margin-bottom:4px}.priority span{font-size:13px;color:var(--muted)}
+.notice{padding:12px 14px;border-left:3px solid var(--warn);background:#211b10;color:#d9c9a8;border-radius:8px;font-size:13px;line-height:1.5}
+footer{margin-top:28px;color:#71869d;font-size:12px;text-align:center}
+@media(max-width:800px){.grid,.resultgrid{grid-template-columns:1fr}.scoregrid{grid-template-columns:repeat(2,1fr)}header{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="container">
+<header><div class="logo">LinkedIn <span>Positioning Engine</span></div><div class="badge">V1 • diagnóstico local</div></header>
+<section class="hero">
+<div class="eyebrow">Posicionamento profissional</div>
+<h1>Transforme seu LinkedIn em uma ferramenta de oportunidade.</h1>
+<p>Informe seu contexto profissional e receba um diagnóstico orientado a posicionamento, busca de recrutadores, palavras-chave e geração de autoridade.</p>
+</section>
+
+<div class="card">
+<div class="grid">
+<div class="field"><label>Nome</label><input id="name" placeholder="Ex.: Rafael Nakama"></div>
+<div class="field"><label>Localização</label><input id="location" placeholder="Ex.: Londrina, PR"></div>
+<div class="field"><label>LinkedIn (URL)</label><input id="linkedin" placeholder="https://www.linkedin.com/in/..."></div>
+<div class="field"><label>Cargo atual</label><input id="currentRole" placeholder="Ex.: Analista de Dados"></div>
+<div class="field"><label>Cargo desejado</label><input id="targetRole" placeholder="Ex.: Engenheiro de Dados"></div>
+<div class="field"><label>Objetivo principal</label>
+<select id="goal"><option>Encontrar emprego</option><option>Ser encontrado por recrutadores</option><option>Construir autoridade</option><option>Conseguir clientes</option><option>Reposicionar carreira</option></select></div>
+<div class="field"><label>Área / especialidade</label><input id="area" placeholder="Ex.: Dados, Tecnologia, Comercial"></div>
+<div class="field"><label>Anos de experiência</label><input id="years" type="number" min="0" placeholder="Ex.: 10"></div>
+<div class="field full"><label>Seu “Sobre” atual (cole aqui)</label><textarea id="about" placeholder="Cole o texto atual do campo Sobre do LinkedIn..."></textarea></div>
+<div class="field full"><label>Experiências principais (opcional)</label><textarea id="experience" placeholder="Ex.: Empresa X — cargo — principais responsabilidades e resultados..."></textarea></div>
+<div class="full actions"><button class="primary" onclick="analyze()">Analisar meu perfil</button><button class="secondary" onclick="fillExample()">Usar exemplo</button><span class="hint">A V1 não acessa automaticamente o LinkedIn; ela trabalha com os dados que você fornece.</span></div>
+</div>
+</div>
+
+<section id="results">
+<div class="card">
+<div class="section-title"><h2>Raio-X do posicionamento</h2><span class="tag" id="positionTag">Análise</span></div>
+<div class="scoregrid" id="scores"></div>
+<div class="notice" id="summary"></div>
+</div>
+
+<div class="resultgrid" style="margin-top:18px">
+<div class="card"><div class="section-title"><h2>Prioridades</h2><span class="tag">Agora</span></div><div id="priorities"></div></div>
+<div class="card"><div class="section-title"><h2>Palavras-chave sugeridas</h2><span class="tag">Busca</span></div><div id="keywords"></div></div>
+
+<div class="card"><div class="section-title"><h2>Headline sugerida</h2><button class="secondary" onclick="copyText('headline')">Copiar</button></div><div class="output" id="headline"></div></div>
+<div class="card"><div class="section-title"><h2>Sobre sugerido</h2><button class="secondary" onclick="copyText('aboutOut')">Copiar</button></div><div class="output" id="aboutOut"></div></div>
+
+<div class="card full"><div class="section-title"><h2>Estratégia de posicionamento</h2><span class="tag">Leitura do mercado</span></div><div class="output" id="strategy"></div></div>
+</div>
+</section>
+<footer>V1 demonstrativa • Dados ficam no navegador e não são enviados para um servidor.</footer>
+</div>
+
+<script>
+const stop = new Set(("de da do das dos e em para por com sem o a os as um uma que no na nos nas ao aos às é sua seu suas seus minha meu eu".split(" ")));
+const roleTerms = {
+"comercial":["vendas","comercial","gestão","negociação","b2b","expansão","pipeline","forecast","clientes","canais","liderança"],
+"dados":["dados","analytics","sql","python","power bi","bi","dashboard","data","estatística","modelagem"],
+"tecnologia":["tecnologia","sistemas","cloud","software","infraestrutura","arquitetura","agile","devops","segurança"],
+"marketing":["marketing","growth","branding","conteúdo","seo","mídia","performance","crm","digital"],
+"finanças":["finanças","financeiro","fp&a","controladoria","orçamento","forecast","indicadores","contabilidade"]
+};
+function words(s){return (s||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"").match(/[a-z0-9+#.-]{3,}/g)||[]}
+function score(v){return Math.max(18,Math.min(96,Math.round(v)))}
+function analyze(){
+ const name=document.getElementById("name").value.trim()||"Profissional";
+ const role=document.getElementById("currentRole").value.trim();
+ const target=document.getElementById("targetRole").value.trim()||role||"profissional";
+ const area=document.getElementById("area").value.trim();
+ const about=document.getElementById("about").value.trim();
+ const exp=document.getElementById("experience").value.trim();
+ const years=Number(document.getElementById("years").value)||0;
+ const text=(role+" "+target+" "+area+" "+about+" "+exp).toLowerCase();
+ const len=about.length;
+ const hasMetrics=/\\b\\d+[\\d.,]*\\s*(%|mil|mi|milhao|milhões|k|m|r\\$)?/i.test(about+" "+exp);
+ const hasResults=/(aument|reduz|cres|ger|entreg|implem|lider|otimiz|econom|resultado|receita|fatur)/i.test(text);
+ const domain=Object.entries(roleTerms).sort((a,b)=>b[1].filter(x=>text.includes(x)).length-a[1].filter(x=>text.includes(x)).length)[0];
+ const domainName=domain[0], domainHits=domain[1].filter(x=>text.includes(x));
+ const clarity=score(42+(role?12:0)+(target?15:0)+(area?10:0)+(domainHits.length*2));
+ const authority=score(38+(years?Math.min(years*2,20):0)+(hasResults?15:0)+(hasMetrics?12:0));
+ const keywords=score(35+domainHits.length*5+(target?10:0));
+ const differentiation=score(40+(hasResults?15:0)+(hasMetrics?15:0)+(about.length>350?8:0)+(years>=8?10:0));
+ const recruiter=score((clarity+authority+keywords+10)/3);
+ const scores=[["Clareza",clarity],["Autoridade",authority],["Palavras-chave",keywords],["Diferenciação",differentiation],["Busca",recruiter]];
+ document.getElementById("scores").innerHTML=scores.map(([n,v])=>`<div class="score"><small>${n}</small><b>${v}</b><div class="bar"><i style="width:${v}%"></i></div></div>`).join("");
+ document.getElementById("positionTag").textContent=target;
+ document.getElementById("summary").textContent=`Leitura inicial: o perfil precisa comunicar “${target}” com mais clareza e conectar experiência a resultados. ${hasMetrics?"Já existem sinais de resultados mensuráveis.":"O próximo ganho provável é transformar responsabilidades em resultados mensuráveis."} O domínio identificado na V1 é ${domainName}.`;
+ const pri=[
+ ["01","Defina uma promessa profissional","Headline, Sobre e experiências devem apontar para o mesmo cargo-alvo."],
+ ["02","Troque descrição por impacto","Sempre que possível, mostre escala, números, ganhos, projetos e problemas resolvidos."],
+ ["03","Aumente a densidade de palavras-chave","Use termos que aparecem naturalmente em vagas e buscas relacionadas a "+target+"."],
+ ["04","Construa prova de autoridade","Destaques e conteúdo devem demonstrar conhecimento, não apenas afirmar especialização."],
+ ["05","Conecte experiência ao próximo cargo","Sua trajetória precisa explicar por que você está pronto para "+target+"."]
+ ];
+ document.getElementById("priorities").innerHTML=pri.map(p=>`<div class="priority"><div class="num">${p[0]}</div><div><strong>${p[1]}</strong><span>${p[2]}</span></div></div>`).join("");
+ const base=domain[1].slice(0,10);
+ const extra=words(target+" "+area).filter(w=>!stop.has(w)).slice(0,8);
+ const kws=[...new Set([...base,...extra])].slice(0,16);
+ document.getElementById("keywords").innerHTML=kws.map(k=>`<span class="keyword">${k}</span>`).join("");
+ const headline=`${target} | ${area||domainName} | ${years?years+"+ anos de experiência | ":""}${domainHits.slice(0,4).join(" • ")||"Estratégia • Resultados • Negócios"}`;
+ document.getElementById("headline").textContent=headline;
+ const aboutOut=`Atuo em ${area||domainName}, conectando experiência prática, visão de negócio e execução para transformar desafios em resultados.
+
+Ao longo da minha trajetória${years?`, com ${years}+ anos de experiência,`:""}, desenvolvi atuação em ${domainHits.slice(0,5).join(", ")||area||"soluções e projetos relevantes para o negócio"}.
+
+Meu foco profissional está em ${target}, com atenção a resultados mensuráveis, melhoria contínua e geração de valor.
+
+Tenho interesse em ambientes nos quais experiência, colaboração e capacidade de resolver problemas possam contribuir diretamente para o crescimento da organização.
+
+Principais temas de atuação:
+${kws.slice(0,8).map(x=>"• "+x).join("\\n")}`;
+ document.getElementById("aboutOut").textContent=aboutOut;
+ document.getElementById("strategy").textContent=`POSICIONAMENTO\\n\\nObjetivo principal: ${document.getElementById("goal").value}\\nCargo-alvo: ${target}\\nÁrea: ${area||domainName}\\n\\nNARRATIVA\\nO perfil deve deixar de ser apenas um histórico de cargos e passar a funcionar como uma proposta de valor: quem é o profissional, que problemas resolve, em que contexto entrega valor e por que sua experiência é relevante para o próximo passo.\\n\\nBUSCA\\nConcentre as palavras-chave em headline, Sobre, experiências e competências — sempre de forma natural. Evite repetir termos artificialmente.\\n\\nPROVA\\nNa próxima versão, substitua frases genéricas por evidências: tamanho de equipes, receita, projetos, indicadores, ganhos, redução de custos, crescimento, escala, tecnologias ou resultados concretos.`;
+ document.getElementById("results").style.display="block";
+ document.getElementById("results").scrollIntoView({behavior:"smooth"});
+}
+function fillExample(){
+ document.getElementById("name").value="Rafael Nakama";
+ document.getElementById("location").value="Londrina, PR";
+ document.getElementById("linkedin").value="https://www.linkedin.com/in/rafaelnakama/";
+ document.getElementById("currentRole").value="Profissional de Tecnologia";
+ document.getElementById("targetRole").value="Especialista em Dados e Analytics";
+ document.getElementById("goal").value="Ser encontrado por recrutadores";
+ document.getElementById("area").value="Dados, Tecnologia e Analytics";
+ document.getElementById("years").value="19";
+ document.getElementById("about").value="Profissional de tecnologia com experiência em programação, dados, analytics e soluções para o negócio.";
+ document.getElementById("experience").value="Experiência de longo prazo em organização financeira, atuando com tecnologia e evolução de soluções. Formação em Arquitetura de Big Data e Analytics, com estudos em banco de dados, Hadoop, HDFS, reconhecimento de padrões e inteligência artificial.";
+}
+function copyText(id){navigator.clipboard.writeText(document.getElementById(id).textContent);alert("Copiado!")}
+</script>
+</body>
+</html>
